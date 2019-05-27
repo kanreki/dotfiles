@@ -1,0 +1,5 @@
+--date-format %Y/%m/%d
+--no-pager
+--no-color
+--file inc
+--sort d
