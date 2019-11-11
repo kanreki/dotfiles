@@ -4,12 +4,22 @@
 :set ignorecase smartcase
 :set nowrapscan
 :set encoding=utf-8
+:set hidden        "Allow unsaved buffers to be buried from view
 
 :let g:ledger_main = 'inc'
 
 " http://learnvimscriptthehardway.stevelosh.com/chapters/10.html
 " (31-May-2018)
 :inoremap jk <Esc>
-:inoremap <Esc> <Nop>
 
+" Convenience for Ledger reconciling:
 :nnoremap <F2> <CR>^i* <Esc><C-w><C-w>
+
+" This may have been needed as a fix for DEL in insert mode, in the 
+" days when I had mapped <Esc> to <Nop> (re: the "jk" trick, above).
+" set t_kD=[3~
+
+" The following two lines seem quite the hack, but have the effect 
+" of disabling Netrw (see ":help netrw").
+:let g:loaded_netrw       = 1
+:let g:loaded_netrwPlugin = 1
