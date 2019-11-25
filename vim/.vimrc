@@ -13,7 +13,7 @@
 :inoremap jk <Esc>
 
 " Convenience for Ledger reconciling:
-:nnoremap <F2> <CR>^i* <Esc><C-w><C-w>
+:nnoremap <F2> <CR>^i* <Esc><C-w><C-w>j
 
 " This may have been needed as a fix for DEL in insert mode, in the 
 " days when I had mapped <Esc> to <Nop> (re: the "jk" trick, above).
