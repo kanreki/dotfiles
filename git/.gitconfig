@@ -1,0 +1,5 @@
+[user]
+	email = 32443233+kanreki@users.noreply.github.com
+	name = kanreki
+[credential]
+	helper = cache --timeout=3600
