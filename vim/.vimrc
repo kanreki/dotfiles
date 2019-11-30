@@ -1,3 +1,6 @@
+:let mapleader = ','
+:let maplocalleader = ','
+
 :set cpoptions+=J  "Sentence motion requires two spaces after punctuation
 :set backup        "Make back-up files, with ~ appended to the file name.
 :set helpheight=40
@@ -13,7 +16,7 @@
 :inoremap jk <Esc>
 
 " Convenience for Ledger reconciling:
-:nnoremap <F2> <CR>^i* <Esc><C-w><C-w>j
+:nnoremap <leader>r <CR>^i* <Esc><C-w><C-w>j
 
 " This may have been needed as a fix for DEL in insert mode, in the 
 " days when I had mapped <Esc> to <Nop> (re: the "jk" trick, above).
