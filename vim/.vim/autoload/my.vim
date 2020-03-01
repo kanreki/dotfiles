@@ -9,11 +9,11 @@ function! my#clearthislist() abort
 endfunction
 
 function! my#stashunknowntxn()
-	let new = input("Enter missing txn info: ") . "\n"
-	let @t .= new
-	execute "normal \<C-w>wG"
-	$put =new
-	execute "normal o\<Esc>\<C-w>w"
+	let note = input("Enter missing txn info: ") . "\n"
+	let @t .= note
+	wincmd w
+	$put =note . \"\n\"
+	wincmd w
 endfunction
 
 function! my#reconcilefunc(acct) abort
