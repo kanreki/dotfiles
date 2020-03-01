@@ -5,11 +5,15 @@
 "
 function! my#clearthislist() abort
 	let @t .= getqflist()[line('.')-1].text . "\n"
-	execute "normal \<CR>i* \<Esc>\<C-w>\<C-w>j"
+	execute "normal \<CR>i* \<Esc>\<C-w>wj"
 endfunction
 
 function! my#stashunknowntxn()
-	let @t .= input("Enter missing txn info: ") . "\n"
+	let new = input("Enter missing txn info: ") . "\n"
+	let @t .= new
+	execute "normal \<C-w>wG"
+	$put =new
+	execute "normal o\<Esc>\<C-w>w"
 endfunction
 
 function! my#reconcilefunc(acct) abort
