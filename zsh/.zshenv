@@ -1,2 +1,4 @@
-export MANPATH=:$PREFIX/lib/node_modules/npm/man
+if [[ -v PREFIX ]] ; then
+  export MANPATH=:$PREFIX/lib/node_modules/npm/man
+fi
 export LESS=--ignore-case
