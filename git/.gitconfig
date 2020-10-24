@@ -5,3 +5,5 @@
 	helper = cache --timeout=3600
 [status]
 	showUntrackedFiles = no
+[core]
+	pager = 
