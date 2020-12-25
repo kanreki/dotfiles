@@ -1,3 +1,4 @@
+PATH=$HOME/bin:$PATH
 if (( ${+PREFIX} )) ; then
   export MANPATH=:$PREFIX/lib/node_modules/npm/man
 fi
