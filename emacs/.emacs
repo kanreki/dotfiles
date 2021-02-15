@@ -449,13 +449,6 @@ This makes it harder to lose an important buffer accidentally."
 ;(require 'tex-site)
 (setq tex-default-mode 'latex-mode)
 
-;(prefer-coding-system (quote sjis))
-;(setq sendmail-coding-system (quote sjis))
-;(register-input-method
-; "japanese" "Japanese" 'quail-use-package
-; "Aあ" "Romaji -> Hiragana -> Kanji&Kana"
-; "quail/japanese")
-
 (setq Man-notify-method 'bully)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
