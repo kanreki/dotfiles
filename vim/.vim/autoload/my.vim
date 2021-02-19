@@ -9,7 +9,7 @@ function! my#clearthislist() abort
 endfunction
 
 function! my#stashunknowntxn()
-	let note = input("Enter missing txn info: ") . "\n"
+	let note = "; " . input("Enter missing txn info: ") . "\n"
 	let @t .= note
 	wincmd w
 	$put =note . \"\n\"
