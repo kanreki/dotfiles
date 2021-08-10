@@ -439,7 +439,7 @@ This makes it harder to lose an important buffer accidentally."
    
 (sfn "Emacs")
 
-(setq explicit-shell-file-name "bash")
+(setq explicit-shell-file-name "zsh")   ; TODO: turn off ZLE in that case
 (setq comint-input-ring-size 100)       ;was 32, let's be more generous :-)
 (shell)
 (rename-buffer "sh")
