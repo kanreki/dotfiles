@@ -6,5 +6,5 @@ HISTSIZE=1000
 SAVEHIST=1000
 HISTFILE=~/.history
 
-bindkey -e
 alias odz='od -tx1z'
+bindkey -e

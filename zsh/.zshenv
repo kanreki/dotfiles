@@ -3,5 +3,8 @@ if (( ${+PREFIX} )) ; then
   # TODO: There's presumably an equivalent that we should set for the Linux case
   manpath=( '' $PREFIX/lib/node_modules/npm/man )
 fi
-export LESS='--ignore-case --quit-if-one-screen'
+
+# TODO: add --quit-if-one-screen once we get a recent enough version of `less` where it actually works
+export LESS=--ignore-case
+
 export EDITOR=nvim
