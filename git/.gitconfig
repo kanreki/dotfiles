@@ -2,8 +2,10 @@
 	email = 32443233+kanreki@users.noreply.github.com
 	name = kanreki
 [credential]
-	helper = cache --timeout=3600
+	helper = pat.sh
 [status]
 	showUntrackedFiles = no
 [core]
 	pager = 
+[credential "https://github.com"]
+	username = kanreki
