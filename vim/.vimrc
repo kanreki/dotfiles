@@ -32,3 +32,8 @@ let g:ledger_qf_size = 80
 " of disabling Netrw (see ":help netrw").
 let g:loaded_netrw       = 1
 let g:loaded_netrwPlugin = 1
+
+syntax enable
+set background=dark
+colorscheme solarized
+highlight Comment cterm=italic
