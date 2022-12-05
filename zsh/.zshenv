@@ -1,4 +1,4 @@
-path=( $HOME/bin $path /usr/local/go/bin )
+path=( $HOME/bin $path /usr/local/go/bin /usr/lib/dart/bin)
 if (( ${+PREFIX} )) ; then
   # TODO: There's presumably an equivalent that we should set for the Linux case
   manpath=( '' $PREFIX/lib/node_modules/npm/man )
@@ -8,3 +8,4 @@ fi
 export LESS=--ignore-case
 
 export EDITOR=nvim
+export GOBIN=$HOME/bin
