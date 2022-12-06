@@ -1,15 +1,5 @@
-
-;(require 'package)
-(package-initialize)
+(add-to-list 'load-path "~/lisp")
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-;; (unless package-archive-contents
-;;   (package-refresh-contents)
-;;   (package-install 'use-package))
-;; (require 'use-package)
-
-(let ((local-settings-file (expand-file-name "site-settings" "~"))
-      (missing-ok t))
-  (load local-settings-file missing-ok))
 
 ;;
 ;; simple editing functions that I find useful
@@ -26,37 +16,13 @@ With prefix arg, refrain from putting it in the kill ring."
           (kill-new n))
       (message "%s" n))))
 
-;; (autoload 'visit-imported "java" 
-;;   "Warp to Java class source (or package dir) named on current import line" t)
-;; (autoload 'visit-exception-source "java"
-;;   "Visit source for Java class mentioned in a stack trace." t)
-;; (autoload 'visit-java-source "java"
-;;   "Visit the source code file of Java class CLASS-NAME." t)
-;; (autoload 'printf "c"
-;;   "Add a debugging print statement to C code." t)
-;; (autoload 'insert-cygwinized-file-name "misc")
-;; (autoload 'my-local-vc-diff "misc"
-;;   "Run Ediff between base and working copy of Subversion file.")
-;; (autoload 'macro-cont-pp "c"
-;;   "Prettify line continuation backslashes for a C #define.")
-;; (autoload 'display-db-code-for-mail "misc"
-;;   "Decorate a chunk of DB code for display in a mail message.")
-(autoload 'ledger-mode "ledger")
-
-;; (global-set-key "\C-cf" 'visit-imported)
-;; (global-set-key "\C-ce" 'visit-exception-source)
-;; (global-set-key "\C-cj" 'visit-java-source)
-;; (global-set-key "\C-cy" 'insert-cygwinized-file-name)
-;; (global-set-key "\C-cd" 'my-local-vc-diff)
-;; (global-set-key [f9] 'printf)
-
 (defun mydel () 
   (interactive)
   (if (and mark-active
 	   (< (region-beginning) (region-end)))
       (delete-region (region-beginning) (region-end))
     (delete-char 1)))
-	
+
 (defun sfn (newName)
   (interactive "sNew frame name: \n")
   (modify-frame-parameters nil (list (cons 'name newName))))
@@ -66,10 +32,10 @@ With prefix arg, refrain from putting it in the kill ring."
 ;; key bindings
 ;;
 (global-set-key [f1] 'bfn)
-(global-set-key [S-f7] "\C-u1\C-v")     ; (scroll-up 1)
-(global-set-key [S-f6] "\C-u1\M-v")     ; (scroll-down 1)
-(global-set-key [f7] "\C-u8\C-v")
-(global-set-key [f6] "\C-u8\M-v")
+(global-set-key [f7] (lambda () (interactive) (scroll-up 8)))
+(global-set-key [f6] (lambda () (interactive) (scroll-down 8)))
+(global-set-key [S-f7] 'scroll-up-line)
+(global-set-key [S-f6] 'scroll-down-line)
 
 ;;
 ;;   2. for functions that don't usually have any key bindings
@@ -101,41 +67,26 @@ With prefix arg, refrain from putting it in the kill ring."
 ;;
 ;; configuration variables and other settings
 ;;
-(if (fboundp 'resize-minibuffer-mode)
-    (resize-minibuffer-mode 1))
-(auto-compression-mode 1)
-
-(setq holidays-in-diary-buffer nil)
 
 (setq scroll-conservatively 9999)       ; scroll just a single line at a time
 (setq dabbrev-case-replace nil)
 (setq kill-whole-line t)
-(setq next-line-add-newlines nil)
-(setq transient-mark-mode t)
-(setq highlight-nonselected-windows nil)
 (setq suggest-key-bindings nil)
 (setq find-file-visit-truename t)
 (setq find-file-wildcards nil)
 
 (setq dired-listing-switches "-ltn")
 
-;;
-;; I like to make sure all my own files are clean, in that they end
-;; with a nice newline.  But it's more important not to make
-;; gratuitous changes to files versioned in a repository.
-;;
+;; TODO: reconsider this in the case of contributing work to a body of
+;; source code that I don't own (so as to avoid introducing gratuitous
+;; noise to diffs); something like what I used to do here, but perhaps
+;; more clever.
 (setq require-final-newline t)
-;; (add-hook 'find-file-hooks
-;;           '(lambda()
-;;              (when (vc-backend (buffer-file-name)) ;is this file managed by version control?
-;;                (make-local-variable 'require-final-newline)
-;;                (setq require-final-newline nil))))
 
 (setq vc-handled-backends nil)          ; it's too slow!
+;; TODO: ... is it though?  Magit recommends leaving it on.
 
-(add-hook
- 'go-mode-hook
- #'(lambda() (setq tab-width 4)))
+(add-hook 'go-mode-hook (lambda() (setq tab-width 2)))
 
 ;; customizations for all of c-mode, c++-mode, objc-mode, java-mode
 ;; 
@@ -144,42 +95,39 @@ With prefix arg, refrain from putting it in the kill ring."
   (modify-syntax-entry ?_ "w"))
 (add-hook
  'c-mode-common-hook
- '(lambda()
-    (c-set-offset 'substatement-open 0)
-    ;;  (c-set-offset (quote knr-argdecl-intro) 0 nil)
-    (setq c-basic-offset 4)
-    
-    (setq c-hanging-braces-alist 
-          '((brace-list-open) 
-            (substatement-open before after) 
-            (block-close . c-snug-do-while)))
-    
-    ;;(set-variable 'tab-width 4)	; this was a Cloudscape convention
-    (fix-c-syntax-table)
-    
-    (local-set-key "\C-c\\" 'macro-cont-pp)
-    ;;
-    ;; I haven't yet figured out why, but it seems that on my
-    ;; Windows box the c-context-line-break doesn't exist.  I guess
-    ;; it's an older version of c-mode.  Instead it has to be
-    ;; 'newline-and-indent.
-    ;;
-    (define-key c-mode-base-map "\C-m" 'c-context-line-break)))
+ (lambda()
+   (c-set-offset 'substatement-open 0)
+   (setq c-basic-offset 4)
+
+   (setq c-hanging-braces-alist
+         '((brace-list-open)
+           (substatement-open before after)
+           (block-close . c-snug-do-while)))
+
+   (fix-c-syntax-table)
+
+   ;;
+   ;; I haven't yet figured out why, but it seems that on my
+   ;; Windows box the c-context-line-break doesn't exist.  I guess
+   ;; it's an older version of c-mode.  Instead it has to be
+   ;; 'newline-and-indent.
+   ;;
+   (define-key c-mode-base-map "\C-m" 'c-context-line-break)))
 
 (add-hook 
  'java-mode-hook
- '(lambda()
-    (c-toggle-electric-state -1)
+ (lambda()
+   (c-toggle-electric-state -1)
 
-    ;; After something like @Override, the continuation of a method
-    ;; declaration should not be indented:
-    ;; 
-    (c-set-offset 'topmost-intro-cont 0)
+   ;; After something like @Override, the continuation of a method
+   ;; declaration should not be indented:
+   ;;
+   (c-set-offset 'topmost-intro-cont 0)
 
-    ;; Align continuation of assignment statement after the '=' sign,
-    ;; but for other statement types just one basic indent.
-    ;; 
-    (c-set-offset 'statement-cont '(first c-lineup-assignments +))))
+   ;; Align continuation of assignment statement after the '=' sign,
+   ;; but for other statement types just one basic indent.
+   ;;
+   (c-set-offset 'statement-cont '(first c-lineup-assignments +))))
 
 (put 'narrow-to-region 'disabled nil)
 (put 'eval-expression 'disabled nil)
@@ -189,59 +137,39 @@ With prefix arg, refrain from putting it in the kill ring."
 (global-set-key "\C-xf" 'find-file)  ; usually set-fill-column
 (global-set-key "\C-x\C-d" 'dired)     ; usually list-directory
 
-(add-hook 'text-mode-hook
-          #'(lambda()
-              (turn-on-auto-fill)))
+(add-hook 'text-mode-hook #'turn-on-auto-fill)
 
+(require 'my-al nil t)
 (add-hook 'ledger-mode-hook 
           (lambda()
-            (auto-fill-mode -1)
-            (let ((load-path (cons nil load-path)))
-              (require 'bills)
-              (load-bills)
-              (local-set-key "\C-cb" 'view-bills))))
+            (setq tab-width 4)
+            (setq indent-tabs-mode t)
+	    (modify-syntax-entry ?. "w")
+	    (modify-syntax-entry ?/ "w")
+	    (modify-syntax-entry ?$ ".")
+            ;; TODO: could this be defined as a file-local variable, and marked as safe,
+            ;; possibly even using defcustom?  That would make it possible for different
+            ;; files to have different masters (though I've never needed such flexibility).
+            (setq-local ledger-master-file "inc")
+            (turn-off-auto-fill)
+            (local-set-key "\C-cb" #'init-bills)))
 
+(add-hook 'ledger-reconcile-mode-hook (lambda() (local-set-key "\C-cv" #'reconc-visa)))
+
+;; TODO: review the latest techniques for controlling adaptive filling, and
+;; reconsider whether/why I at one point thought that "+" ought to be included
+;; in the list of "bullet" characters.
+
+;; Not used much lately, but I used to like to indicate a text file by
+;; a *.t suffix.
 ;; 
-;; insert a "+" before the ">" that (I hope, still) occurs in the
-;; adaptive fill regexp.  The regexp currently looks like this:
-;;
-;;     "[ 	]*\\([-|#;>*]+[ 	]*\\|(?[0-9]+[.)][ 	]*\\)*"
-;;
-;; but I thought it might make things more resilient to change to do
-;; it this way.
-;;
-(require 'cl)
-(let ((p (position ?> adaptive-fill-regexp)))
-  (setq adaptive-fill-regexp (concat (substring adaptive-fill-regexp 0 p)
-                                     "+"
-                                     (substring adaptive-fill-regexp p))))
-        
-
-
-;;
-;; Add some things to the Emacs auto-mode-alist.  First define a
-;; function to add one entry onto the list; then call it as many times
-;; as necessary.  This is better than before, because it limits the
-;; codification of how it's done to a single place.  (The DRY
-;; principle.)
-;;
-
-(defun register-mode-suffix(suffix mode)
-  (let ((regexp (format "\\.%s\\'" suffix)))
-    (push (cons regexp mode) auto-mode-alist)))
-
-;; (register-mode-suffix "[ar]html" 'html-mode)
-;; (register-mode-suffix "rbx" 'ruby-mode)
-;; (register-mode-suffix "[rwe]ar" 'archive-mode)
-(register-mode-suffix "t" 'indented-text-mode)
-;; (register-mode-suffix "cs" 'java-mode)  ; for Microsoft.NET C#
-;; (register-mode-suffix "pl" 'perl-mode)
-
-
+(add-to-list 'auto-mode-alist '("\\.t\\'" . indented-text-mode))
 
 ;;;
 ;;; generic remove (all occurrences of) something from a list
 ;;;
+;;; TODO: WTF was I doing with these translation maps; and in any case
+;;; why didn't I use CL-REMOVE (from the CL package)?
 (defun remove-from-list(the-list a-function user-data)
   (let (p			; pointer to current element in list
 	(anchor the-list)	; previous element in list, so we can delete
@@ -256,7 +184,7 @@ With prefix arg, refrain from putting it in the kill ring."
 (setq completion-auto-help nil)
 (setq completion-ignored-extensions (remove "log" completion-ignored-extensions))
 
-(when window-system
+(when (display-graphic-p)
 
   ;; I have my own grand plans for these keys
   (defun keysym-comp(cons-cell key-sym)
@@ -274,9 +202,8 @@ With prefix arg, refrain from putting it in the kill ring."
   ;;					 (cdr function-key-map))))
   )
 
-(when (>= emacs-major-version 21)
-  (blink-cursor-mode 0)
-  (menu-bar-mode 0))
+(blink-cursor-mode 0)
+(menu-bar-mode 0)
 
 (defun my-shell-paster(the-arg)
   (interactive "e")
@@ -285,128 +212,87 @@ With prefix arg, refrain from putting it in the kill ring."
     (goto-char (point-max))
     (yank)))
 (require 'disp-table)
-(add-hook 'lisp-mode-hook
-	  (function (lambda ()
-		      (modify-syntax-entry ?- "w"))))
+(add-hook 'lisp-mode-hook (lambda () (modify-syntax-entry ?- "w")))
 (defun pin-buffer()
   "Require confirmation to kill current buffer.
 This makes it harder to lose an important buffer accidentally."
   (interactive)
   (make-local-variable 'kill-buffer-query-functions)
   (setq kill-buffer-query-functions
-      (list (function
-             (lambda()
-             (yes-or-no-p "Really kill this buffer? "))))))
+        (list (lambda()
+                (yes-or-no-p "Really kill this buffer? ")))))
+
+(defun my-asker (prompt)
+  (let* ((prog-name "ssh-askpass")
+         (exec-file (executable-find prog-name)))
+    (if (or (null exec-file) (null (file-executable-p exec-file)))
+        nil
+      (let ((fname (make-temp-file "askpass")))
+        (unwind-protect
+            (with-temp-buffer
+              (let ((ret (call-process prog-name nil (list (current-buffer) fname) nil prompt)))
+                (if (zerop ret)
+                    (string-trim-right (buffer-string) "[\n]")
+                  (insert-file-contents fname)
+                  (let ((msg (string-trim-right (buffer-string) "[\n]")))
+                    (when (zerop (length msg))
+                      (setq msg "(empty stderr)"))
+                    (error "the \"%s\" utility failed to get a password: %s" prog-name msg)))))
+          (delete-file fname))))))
+
 (defun show-shell-timestamp ()
   (interactive)
   (let ((ts (get-text-property (point) 'my-timestamp)))
     (when ts (message "%s" (current-time-string ts)))))
 (add-hook 'shell-mode-hook
-	  (function (lambda ()
-		      (local-set-key [f27] 'comint-bol)
-		      (local-set-key [mouse-2] (quote my-shell-paster))
-                      (local-set-key (kbd "C-c h") #'show-shell-timestamp)
-		      (pin-buffer)
-		      (setq mode-line-format 
-			    '("" mode-line-modified
-			      mode-line-buffer-identification "  " 
-			      default-directory "   " global-mode-string 
-			      "   %[(" mode-name mode-line-process 
-			      minor-mode-alist "%n" ")%]--" 
-			      (line-number-mode "L%l--") 
-			      (column-number-mode "C%c--") (-3 . "%p") "-%-"))
-		      (setq comint-scroll-to-bottom-on-input 'this)
-                      (setq comint-scroll-show-maximum-output nil)
-                      (add-hook 'comint-preoutput-filter-functions
-                                #'(lambda (s)
-                                    (put-text-property 0 (length s) 'my-timestamp (current-time) s)
-                                    s))
+	  (lambda ()
+	    (local-set-key [f27] #'comint-bol)
+	    (local-set-key [mouse-2] #'my-shell-paster)
+            (local-set-key (kbd "C-c h") #'show-shell-timestamp)
+            ;; is this really needed?  Emacs already does something
+            ;; like this, at least if the shell is still running.
+	    (pin-buffer)
+	    (setq mode-line-format 
+		  '("" mode-line-modified
+		    mode-line-buffer-identification "  " 
+		    default-directory "   " global-mode-string 
+		    "   %[(" mode-name mode-line-process 
+		    minor-mode-alist "%n" ")%]--" 
+		    (line-number-mode "L%l--") 
+		    (column-number-mode "C%c--") (-3 . "%p") "-%-"))
+	    (setq comint-scroll-to-bottom-on-input 'this)
+            (setq comint-scroll-show-maximum-output nil)
+            (setq comint-password-function #'my-asker)
+            (add-hook 'comint-preoutput-filter-functions
+                      (lambda (s)
+                        (put-text-property 0 (length s) 'my-timestamp (current-time) s)
+                        s))
 
-		      ;; undo the stupid effects of winnt.el, to get forward slashes
-		      (setq comint-completion-addsuffix t)))
+	    ;; undo the stupid effects of winnt.el, to get forward slashes
+	    (setq comint-completion-addsuffix t))
 	  t				; APPEND
 	  )
 (add-hook 'gdb-mode-hook
-	  (function (lambda ()
-		      (make-local-variable 'kill-buffer-query-functions)
-		      (setq kill-buffer-query-functions
-			    (list (function
-				   (lambda()
-				     (yes-or-no-p "Really kill this buffer? ")))))
-                      (setq comint-scroll-show-maximum-output nil)
-		      (local-set-key [mouse-2] (quote my-shell-paster)))))
+	  (lambda ()
+            (pin-buffer)
+            (setq comint-scroll-show-maximum-output nil)
+	    (local-set-key [mouse-2] #'my-shell-paster)))
 ;;; consider using (get-buffer-process (current-buffer)) to prevent
 ;;; accidental deletion of GDB buffers that are still active
 ;;; hey, maybe kill-buffer-query-functions is better!
 
-;;; when loading dired, load dired-x too, and set a configuration
-(add-hook 'dired-load-hook 
-	  (function (lambda () 
-                      (load "dired-x")
-                      (add-to-list 'dired-omit-extensions ".svn-base")
-                      (setq dired-omit-files (concat dired-omit-files "\\|^CVS$")))))
+(add-hook 'dired-load-hook (lambda () (load "dired-x")))
 
 (setq lisp-interaction-mode-hook lisp-mode-hook)
 (setq emacs-lisp-mode-hook lisp-mode-hook)
 
-;;; if user has specified an initial Emacs configuration via an environment 
-;;; variable, check the appropriate initialization file.  If it really exists, 
-;;; load it.
-(and (setq cfg (getenv "EMACS_CFG"))
-     (let ((fn (expand-file-name cfg (expand-file-name "~/emacs_cfg"))))
-       (and (file-readable-p fn)
-	    (load-file fn))))
-
-(setq load-path (append (list "~/lisp") load-path))
-(add-to-list 'load-path "~/lisp")
-(add-to-list 'load-path "/usr/local/go/misc/emacs" t)
-;(require 'go-mode-load)
-
 (add-to-list 'display-buffer-alist
-     '("^\\*shell\\*$" . (display-buffer-same-window)))
+             '("^\\*shell\\*$" . (display-buffer-same-window)))
 
 ;;
 ;; do system-dependent stuff, including font preference
 ;;
-(case system-type
-  ('windows-nt
-   (setq my-font-choice "-*-Fixedsys-normal-r-*-*-16-120-96-96-c-*-iso8859-1")
-   (setq Man-switches "")
-   (setq ediff-diff3-options "")        ; (?)
-   (setq archive-zip-use-pkzip nil)
-   
-   ;; setting shell-file-name to "bash" makes find-dired and friends work
-   ;; on Windows.
-   (setq shell-file-name "bash")
-   
-   (setq ps-printer-name "\\\\sleeper\\DellMFP")
-
-   (defun get-cyg-path(p) 
-     (shell-command-to-string
-      (format "cygpath -m %s | tr -d '\\n'" p)))
-   (mapcar #'(lambda (path)
-               (push (get-cyg-path path) Info-default-directory-list))
-           '("/usr/share/info" "/usr/info" "/usr/local/info"))
-
-   (defvar *gnuserv-port* 21490         ; TODO pretty sure gnuserv is obsolete
-     "The TCP port on which gnuserv listens.")
-   (condition-case v
-       ;; See if we can find an already running gnuserv.  Only if we
-       ;; can't do we start one of our own.
-       ;; 
-       (let ((p (open-network-stream "probe" nil "localhost" *gnuserv-port*)))
-         (delete-process p))
-     (file-error 
-      (let ((err (second v))
-            (reason (third v)))
-        (if (and (equal err "connection failed")
-                 (equal reason "connection refused"))
-            (progn
-              (load-library "gnuserv")
-              (gnuserv-start)
-              (setq gnuserv-frame (selected-frame)))
-          (error "Probe for running gnuserv: %s" (error-message-string v)))))))
-
+(cl-case system-type
   ('darwin
    (setq visible-bell t)
    (push "/opt/local/share/info" Info-default-directory-list)
@@ -425,7 +311,7 @@ This makes it harder to lose an important buffer accidentally."
    (setq dired-use-ls-dired nil))
   ('gnu/linux
    (setq printer-name "rlp")
-   (setq my-font-choice "-b&h-lucidatypewriter-medium-r-normal-sans-12-120-75-*-*-*-*-*")
+   (setq my-font-choice "Noto Mono-11")
 
    ;; On Debian Linux, man switches "-7" avoids some weirdness with some
    ;; kind of fancy hyphens -- I guess they're "soft hyphens" or
@@ -434,20 +320,22 @@ This makes it harder to lose an important buffer accidentally."
    ;; on Win32!
    ;; 
    (setq Man-switches "-7")
-   ;; (server-start)
+   (server-start)
    ))
-   
+
 (sfn "Emacs")
 
-(setq explicit-shell-file-name "zsh")   ; TODO: turn off ZLE in that case
+(let ((my-frame-attributes `((background-color . "midnight blue")
+			     (foreground-color . "wheat")
+                             (font . ,my-font-choice)
+			     (cursor-color . "yellow"))))
+  (mapcar (lambda (cons)
+	    (add-to-list 'default-frame-alist cons))
+	  my-frame-attributes))
+
 (setq comint-input-ring-size 100)       ;was 32, let's be more generous :-)
 (shell)
 (rename-buffer "sh")
-;(if (fboundp 'comint-watch-for-password-prompt)
-;    (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt))
-
-;(require 'tex-site)
-(setq tex-default-mode 'latex-mode)
 
 (setq Man-notify-method 'bully)
 (custom-set-faces
@@ -455,34 +343,25 @@ This makes it harder to lose an important buffer accidentally."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(comint-highlight-input ((t (:weight normal)))))
+ '(comint-highlight-input ((t (:weight normal))))
+ '(minibuffer-prompt ((t (:foreground "wheat")))))
+ ;TODO: only in non-X (terminal) window?
 
 (setq-default indent-tabs-mode nil)
 
-(setq compile-command "cd ../build_unix;make  ")
-(global-set-key "\C-cn" 'simple-record)
-(global-set-key "\C-csc" 'cscope-find-functions-calling-this-function)
-
+(setq eval-expression-print-length nil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ledger-highlight-xact-under-point nil)
+ '(ledger-mode-should-check-version nil)
+ '(ledger-post-auto-align nil)
+ '(ledger-reconcile-buffer-header "" nil nil "How do you set a 'string to nil?")
+ '(ledger-reconcile-buffer-line-format "%(date)s %-4(code)s %-30(payee)s %15(amount)s
+")
  '(line-move-visual nil)
- '(org-agenda-files (quote ("~/plan.org")))
- '(package-selected-packages (quote (magit scala-mode ensime)))
- '(safe-local-variable-values (quote ((tab-stop-list 16 42)))))
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (shell . t)))
-(require 'org)
-(push 'org-id org-modules)
+ '(package-selected-packages '(ledger-mode magit)))
 
 (setq inhibit-startup-screen t)
-
-;; New feature introduced in Emacs 24.4; but my bills mode hack
-;; relies on "ledger" file buffer not having its name changed.  Turn
-;; this off until I fix that.
-(setq uniquify-buffer-name-style nil)
