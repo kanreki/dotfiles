@@ -139,22 +139,8 @@ With prefix arg, refrain from putting it in the kill ring."
 
 (add-hook 'text-mode-hook #'turn-on-auto-fill)
 
-(require 'my-al nil t)
-(add-hook 'ledger-mode-hook 
-          (lambda()
-            (setq tab-width 4)
-            (setq indent-tabs-mode t)
-	    (modify-syntax-entry ?. "w")
-	    (modify-syntax-entry ?/ "w")
-	    (modify-syntax-entry ?$ ".")
-            ;; TODO: could this be defined as a file-local variable, and marked as safe,
-            ;; possibly even using defcustom?  That would make it possible for different
-            ;; files to have different masters (though I've never needed such flexibility).
-            (setq-local ledger-master-file "inc")
-            (turn-off-auto-fill)
-            (local-set-key "\C-cb" #'init-bills)))
-
-(add-hook 'ledger-reconcile-mode-hook (lambda() (local-set-key "\C-cv" #'reconc-visa)))
+;; Hook for local per-site Emacs init settings (optional):
+(require 'my-init nil t)
 
 ;; TODO: review the latest techniques for controlling adaptive filling, and
 ;; reconsider whether/why I at one point thought that "+" ought to be included
@@ -355,12 +341,6 @@ This makes it harder to lose an important buffer accidentally."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ledger-highlight-xact-under-point nil)
- '(ledger-mode-should-check-version nil)
- '(ledger-post-auto-align nil)
- '(ledger-reconcile-buffer-header "" nil nil "How do you set a 'string to nil?")
- '(ledger-reconcile-buffer-line-format "%(date)s %-4(code)s %-30(payee)s %15(amount)s
-")
  '(line-move-visual nil)
  '(package-selected-packages '(ledger-mode magit)))
 
