@@ -1,5 +1,8 @@
+(require 'cl-lib)
+
 (add-to-list 'load-path "~/lisp")
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(eval-after-load 'package
+  #'(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t))
 
 ;;
 ;; simple editing functions that I find useful
@@ -74,6 +77,7 @@ With prefix arg, refrain from putting it in the kill ring."
 (setq suggest-key-bindings nil)
 (setq find-file-visit-truename t)
 (setq find-file-wildcards nil)
+(setq mouse-drag-copy-region t)
 
 (setq dired-listing-switches "-ltn")
 
@@ -342,6 +346,6 @@ This makes it harder to lose an important buffer accidentally."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(line-move-visual nil)
- '(package-selected-packages '(ledger-mode magit)))
+ '(package-selected-packages '(go-mode ledger-mode magit)))
 
 (setq inhibit-startup-screen t)
