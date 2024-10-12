@@ -284,8 +284,9 @@ This makes it harder to lose an important buffer accidentally."
 ;;
 (cl-case system-type
   ('darwin
+   (setq mac-command-modifier 'meta)
+   (setq mac-option-modifier 'meta)
    (setq visible-bell t)
-   (push "/opt/local/share/info" Info-default-directory-list)
    ;; If I'm coming in via SSH, it's probably from Linux, so choose
    ;; font that looks best on that display.  TODO: actually take a
    ;; look at the value of SSH_CLIENT and try to figure out where
@@ -297,8 +298,7 @@ This makes it harder to lose an important buffer accidentally."
          (if (getenv "SSH_CLIENT")
              "-b&h-lucidatypewriter-medium-r-normal-sans-12-120-75-*-*-*-*-*"
            "lucidasanstypewriter-12"))
-   (server-start)
-   (setq dired-use-ls-dired nil))
+   (server-start))
   ('gnu/linux
    (setq printer-name "rlp")
    (setq my-font-choice "Noto Mono-11")
@@ -317,7 +317,6 @@ This makes it harder to lose an important buffer accidentally."
 
 (let ((my-frame-attributes `((background-color . "midnight blue")
 			     (foreground-color . "wheat")
-                             (font . ,my-font-choice)
 			     (cursor-color . "yellow"))))
   (mapcar (lambda (cons)
 	    (add-to-list 'default-frame-alist cons))
