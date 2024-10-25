@@ -1,0 +1,1 @@
+set tcl_prompt1 { puts -nonewline "tcl % " }
