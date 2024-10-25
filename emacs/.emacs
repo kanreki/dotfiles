@@ -345,6 +345,6 @@ This makes it harder to lose an important buffer accidentally."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(line-move-visual nil)
- '(package-selected-packages '(go-mode ledger-mode magit)))
+ '(package-selected-packages '(go-mode magit)))
 
 (setq inhibit-startup-screen t)
