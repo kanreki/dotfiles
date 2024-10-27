@@ -35,5 +35,4 @@ let g:loaded_netrwPlugin = 1
 
 syntax enable
 set background=dark
-colorscheme solarized
 highlight Comment cterm=italic
