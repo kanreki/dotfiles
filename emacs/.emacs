@@ -283,7 +283,7 @@ This makes it harder to lose an important buffer accidentally."
 ;; do system-dependent stuff, including font preference
 ;;
 (cl-case system-type
-  ('darwin
+  (darwin
    (setq mac-command-modifier 'meta)
    (setq mac-option-modifier 'meta)
    (setq visible-bell t)
@@ -299,7 +299,7 @@ This makes it harder to lose an important buffer accidentally."
              "-b&h-lucidatypewriter-medium-r-normal-sans-12-120-75-*-*-*-*-*"
            "lucidasanstypewriter-12"))
    (server-start))
-  ('gnu/linux
+  (gnu/linux
    (setq printer-name "rlp")
    (setq my-font-choice "Noto Mono-11")
 
