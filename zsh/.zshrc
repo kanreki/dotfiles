@@ -12,6 +12,6 @@ bindkey -e
 
 function make_restic_url() {
 	read -s '?Password: ' my_password
-	printf -v RESTIC_REPOSITORY rest:http://alan:%s@serenity.local:8088/ "$my_password"
+	printf -v RESTIC_REPOSITORY rest:http://alan:%s@peace.local:8088/ "$my_password"
 	export RESTIC_REPOSITORY
 }
