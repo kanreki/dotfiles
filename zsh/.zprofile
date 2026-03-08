@@ -7,4 +7,4 @@ case $OSTYPE in
         ;;
 esac
 
-PATH=$PATH:$HOME/bin
+PATH=$PATH:$HOME/bin:$HOME/scripts
